@@ -5,15 +5,21 @@
       class="search-text-field"
       [(ngModel)]="searchText"
       placeholder="enter search text"
+      (keyup)="keyPressed()"
     />
   </div>
 
-  <div class="no-results" *ngIf="!results.length">
+  <div class="no-results" *ngIf="!results.length || !searchText.length">
     <div *ngIf="!searchText.length">Search for a term</div>
-    <div *ngIf="searchText.length">No results for {{ searchText }}</div>
+    <div *ngIf="searchText.length && searching">
+      Searching for {{ searchText }}
+    </div>
+    <div *ngIf="searchText.length && !searching">
+      😰 No results for {{ searchText }}
+    </div>
   </div>
 
-  <ul *ngIf="results.length && searchText.length">
+  <ul *ngIf="results.length && searchText.length && !searching">
     <li *ngFor="let result of results" class="search-result">
       <a routerLink="/shows/{{result.id}}">{{ result.name }}</a>
     </li>

@@ -13,7 +13,7 @@ import { SearchResultsService } from 'src/app/services/search-results.service';
 export class SearchComponent implements OnInit {
   searchText;
   results: SearchResult[] = [];
-  searching = true;
+  searching = false;
 
   constructor(
     private apiClient: ApiClientService,
@@ -24,6 +24,7 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
+    // this.searching = false;
     const inputElm = document.getElementById('searchTextField');
     fromEvent(inputElm, 'keyup')
       .pipe(
@@ -38,5 +39,9 @@ export class SearchComponent implements OnInit {
           this.resultsService.searchText = this.searchText;
         });
       });
+  }
+
+  keyPressed() {
+    if (this.searchText != '') this.searching = true;
   }
 }
