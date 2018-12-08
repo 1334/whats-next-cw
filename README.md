@@ -4,21 +4,7 @@ _What's next_ is an app for tracking your favourite TV shows as well as discover
 
 ## Contribution
 
-Took over the project from @1334 and added full test coverage to the backend and authentication to the front end. Leveraging the Jest testing library.
-
-```
------------------------------|----------|----------|----------|----------|-------------------|
-File                         |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
------------------------------|----------|----------|----------|----------|-------------------|
-All files                    |      100 |      100 |      100 |      100 |                   |
- thirdPartyAuthentication.js |      100 |      100 |      100 |      100 |                   |
------------------------------|----------|----------|----------|----------|-------------------|
-Test Suites: 1 passed, 1 total
-Tests:       58 passed, 58 total
-Snapshots:   0 total
-Time:        7.361s
-Ran all test suites related to changed files.
-```
+Took over the project from @1334 and added authentication to the front end and test coverage to the back end resulting in over 90% coverage [report](./server/coverage/lcov-report/index.html).
 
 ## Screenshots
 
