@@ -4,8 +4,6 @@
 
 ## Screenshots
 
-### Recommendations
-
 <div>
   <img src="./assets/recommended.png" alt="Recommended" width="250"> &nbsp;&nbsp;
   <img src="./assets/my_shows.png" alt="My Shows" width="250"> &nbsp;&nbsp;
