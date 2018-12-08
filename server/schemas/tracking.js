@@ -3,8 +3,18 @@ module.exports = (sequelize, DataTypes) => {
   const Tracking = sequelize.define(
     'Tracking',
     {
-      rating: DataTypes.INTEGER,
-      status: DataTypes.STRING
+      rating: {
+        type: DataTypes.INTEGER,
+        validate: {
+          min: 0,
+          max: 10
+        }
+      },
+      status: {
+        type: DataTypes.ENUM('seen','toSee','seeing', 'none'),
+        defaultValue: 'none'
+      },
+      review: DataTypes.STRING
     },
     {}
   );

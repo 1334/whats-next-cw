@@ -1,0 +1,59 @@
+<div class="login">
+  <div class="logo">
+      <svg style="fill:#d2d2d2;" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 60 60" style="enable-background:new 0 0 60 60;" xml:space="preserve" width="75px" height="75px">
+      <g>
+        <path d="M18.195,55.5h23.609L30,36.613L18.195,55.5z M21.805,53.5L30,40.387L38.195,53.5H21.805z" fill="#d2d2d2"/>
+        <path d="M0,4.5v40h22c0.553,0,1-0.447,1-1s-0.447-1-1-1H2v-36h56v36H38c-0.553,0-1,0.447-1,1s0.447,1,1,1h22v-40H0z" fill="#d2d2d2"/>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      <g>
+      </g>
+      </svg>
+    <h1 class="logo__title">
+        Whats Next
+    </h1>
+  </div>
+  <div class="login__box">
+    <button (click)="loginclick()">Log In</button>
+    <div *ngIf="login" class="login__box__login">
+      <input placeholder="email" (keyup)="onKeyLogin($event)">
+      <input placeholder="password" type="password" (keyup)="onKeyLogin($event)">
+      <button (click)="login_send()" class="btn__send">Send</button>
+    </div>
+    <button (click)="signinclick()">Sign In</button>
+    <div *ngIf="signin" class="login__box__signin">
+        <input placeholder="email" (keyup)="onKeySignIn($event)">
+        <input placeholder="name" (keyup)="onKeySignIn($event)">
+        <input placeholder="password" type="password" (keyup)="onKeySignIn($event)">
+        <button (click)="sign_send()" class="btn__send">Send</button>
+    </div>
+    <button (click)="socialSignIn('facebook')" class="FBbutton">Facebook Sign In</button>
+  </div>
+</div>

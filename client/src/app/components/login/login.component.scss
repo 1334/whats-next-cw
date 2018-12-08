@@ -1,0 +1,54 @@
+.login {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  &__box {
+    height: 60%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .btn__send {
+      background-color: #ef9c39;
+      border-radius: 50px;
+    }
+
+    input {
+      font-size: 1rem;
+    }
+    button {
+      margin-top: .5rem;
+      font-size: 2rem
+    }
+    &__login {
+      display: flex;
+      flex-direction: column;
+    }
+    &__signin {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .FBbutton {
+    background-color: rgb(60,90,153);
+  }
+
+  .logo {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &__title {
+      margin-right: 1rem;
+      margin-left: 1rem;
+      color: #ef9c39;
+    }
+
+  }
+}
+

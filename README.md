@@ -1,6 +1,24 @@
 # What's next
 
-*What's next* is an app for tracking your favourite TV shows as well as discovering new ones based on the ones you like.
+_What's next_ is an app for tracking your favourite TV shows as well as discovering new ones based on the ones you like.
+
+## Contribution
+
+Took over the project from @1334 and added full test coverage to the backend and authentication to the front end. Leveraging the Jest testing library.
+
+```
+-----------------------------|----------|----------|----------|----------|-------------------|
+File                         |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+-----------------------------|----------|----------|----------|----------|-------------------|
+All files                    |      100 |      100 |      100 |      100 |                   |
+ thirdPartyAuthentication.js |      100 |      100 |      100 |      100 |                   |
+-----------------------------|----------|----------|----------|----------|-------------------|
+Test Suites: 1 passed, 1 total
+Tests:       58 passed, 58 total
+Snapshots:   0 total
+Time:        7.361s
+Ran all test suites related to changed files.
+```
 
 ## Screenshots
 
@@ -21,11 +39,10 @@ After making sure that PostgreSQL is up and running on your machine run `cd serv
 With that run on two different tabs the client and the server.
 From the rooot of the project, type `cd client && ng serve` to run the client and `cd server && node index.js` to run the server. With that the app will be accessible on `http://localhost:4200`.
 
-
 ## Tech stack
 
 The tech stack used to build this app is:
-* The frontend is an Angular app and all the styling is done with Sass
-* The backend is an expreess server backed up by a PostgreSQL db with Sequelize as an ORM.
-* All the data comes from [The Movie DB](https://www.themoviedb.org) API.
 
+- The frontend is an Angular app and all the styling is done with Sass
+- The backend is an expreess server backed up by a PostgreSQL db with Sequelize as an ORM.
+- All the data comes from [The Movie DB](https://www.themoviedb.org) API.

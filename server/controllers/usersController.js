@@ -1,56 +1,163 @@
 const usersController = {};
-const helpers = require('./helpers');
-const db = require('../models/index');
-const Op = db.Sequelize.Op;
+const userModule = require('../models/userModel');
+const bcrypt = require('bcrypt');
+const btoa = require('atob');
+const uuid = require('uuid/v4');
+const thirdPartyAuthentication = require('../middlewares/thirdPartyAuthentication');
 
 usersController.get = async (req, res) => {
-  const user = await helpers.getUser(req.userId);
-  res.status(200).send(user);
+  return res.status(200).send({
+      name: req.user.name,
+      email: req.user.email,
+      authToken: req.user.authToken,
+      avatar: req.user.avatar
+    });
 };
 
-usersController.status = async (req, res) => {
-  const id = req.params.id;
-  const userId = +req.userId;
-  let show = await helpers.getShowForUser(id, userId);
+usersController.create = async (
+  req,
+  res,
+  next,
+  thirdPartyLogin = usersController._facebookLogIn
+) => {
+  if (req.body.provider === 'facebook') return thirdPartyLogin(req, res);
 
-  await db.Tracking.findOrCreate({
-    where: { userId, showId: show.id },
-    defaults: { status: req.body.status }
-  })
-    .spread(tracking => {
-      tracking.status = req.body.status;
-      return tracking;
-    })
-    .then(tracking => tracking.save());
+  const { name, password, email, avatar } = req.body;
+  let hash;
 
-  const similar = await db.Show.findAll({
-    where: { id: show.similar, backdrop_path: { [Op.ne]: null } }
-  });
-  show = await helpers.getShowForUser(id, userId);
-  show.similar = similar;
-  res.status(200).send(show);
+  if (!name || !password || !email) {
+    res.status(400).send({
+      errors: ['name, password or email missing']
+    });
+    return;
+  }
+  let user = await userModule.getUserByEmail(email);
+  if (user) {
+    res.status(400).send({
+      errors: ['email already in use']
+    });
+    return;
+  } else {
+    try {
+      hash = await bcrypt.hash(password, +process.env.PASSWORD_HASH);
+    } catch (error) {
+      throw new Error('Problem in hash function');
+    }
+    try {
+      const authToken = uuid();
+      const userDb = await userModule.createUser(
+        name,
+        hash,
+        email,
+        avatar,
+        authToken
+      );
+      res.status(201).send({
+        name: userDb.name,
+        email: userDb.email,
+        authToken: userDb.authToken,
+        avatar: userDb.avatar
+      });
+    } catch (error) {
+      res.status(400).send();
+    }
+  }
 };
 
-usersController.rate = async (req, res) => {
-  const id = +req.params.id;
-  const userId = +req.userId;
-  const show = await helpers.getShowForUser(id, userId);
+usersController._facebookLogIn = async (
+  req,
+  res,
+  next,
+  verifyFacebook = thirdPartyAuthentication.verifyFacebook
+) => {
 
-  await db.Tracking.findOrCreate({
-    where: { userId, showId: show.id },
-    defaults: { rating: req.body.rating }
-  })
-    .spread(tracking => {
-      tracking.rating = req.body.rating;
-      return tracking;
-    })
-    .then(tracking => tracking.save());
+  const { id, image, name, token, email } = req.body;
 
-  const similar = await db.Show.findAll({
-    where: { id: show.similar, backdrop_path: { [Op.ne]: null } }
-  });
-  show.similar = similar;
-  res.status(200).send(show);
+  const verification = await verifyFacebook(token);
+  console.log('verification: ', verification)
+  const password = uuid();
+
+  if (verification.isValid) {
+    try {
+      const userDb = await userModule.findOrCreateUser(
+        name,
+        password,
+        email,
+        image,
+        token,
+        id
+      );
+      res.status(201).send({
+        name: userDb.name,
+        email: userDb.email,
+        authToken: userDb.authToken,
+        avatar: userDb.avatar
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send();
+    }
+  } else {
+    res.status(400).send({
+      error: ['FB verification failure']
+    });
+  }
+};
+
+usersController.signIn = async (
+  req,
+  res,
+  next,
+  thirdPartyLogin = usersController._facebookLogIn
+) => {
+  let basic;
+
+  if (req.body.provider === 'facebook') return thirdPartyLogin(req, res);
+
+  if (!req.headers.authorization) {
+    res.status(400).send({
+      errors: ['Missing authentication header']
+    });
+    return;
+  }
+
+  basic = req.headers.authorization.split(' ');
+  if (basic.length < 2 && basic[0] != 'Basic') {
+    res.status(400).send({ error: ['Missing basic authentication header'] });
+    return;
+  }
+
+  const [username, password] = btoa(basic[1]).split(':');
+  const userDb = await userModule.getUserByEmail(username);
+
+  if (!userDb) {
+    res.status(400).send({
+      errors: ['Incorrect email']
+    });
+    return;
+  }
+  try {
+    const match = await bcrypt.compare(password, userDb.password);
+    if (match) {
+      res.status(200).send({
+        name: userDb.name,
+        email: userDb.email,
+        authToken: userDb.authToken,
+        avatar: userDb.avatar
+      });
+    } else {
+      res.status(400).send({
+        errors: ['Incorrect password']
+      });
+    }
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      errors: ['Incorrect password']
+    });
+    return;
+  }
 };
 
 module.exports = usersController;
