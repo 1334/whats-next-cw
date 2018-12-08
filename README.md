@@ -7,9 +7,9 @@
 ### Recommendations
 
 <div>
-  <img src="./assets/recommended.png" alt="Recommended" width="300"> &nbsp;&nbsp;
-  <img src="./assets/my_shows.png" alt="My Shows" width="300"> &nbsp;&nbsp;
-  <img src="./assets/details.png" alt="Details" width="300">
+  <img src="./assets/recommended.png" alt="Recommended" width="250"> &nbsp;&nbsp;
+  <img src="./assets/my_shows.png" alt="My Shows" width="250"> &nbsp;&nbsp;
+  <img src="./assets/details.png" alt="Details" width="250">
 </div>
 
 ## Getting started
