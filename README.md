@@ -18,10 +18,6 @@ In order to run the app you need to `npm install` on both the client and server 
 
 With the key save it in a `.env` file on the `/server/` folder under as `API_KEY`.
 
-```
-API_KEY=221435364564365436
-```
-
 After making sure that PostgreSQL is up and running on your machine run `cd server && npx sequelize db:create && npm run recreateDb` in order to put the DB in its initial state.
 
 With that run on two different tabs the client and the server.
