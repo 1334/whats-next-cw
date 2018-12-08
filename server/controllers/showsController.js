@@ -1,91 +1,42 @@
-const helpers = require('./helpers');
-const db = require('../models/index');
-
+const showModule = require('../models/showModel');
 const showsController = {};
-const Op = db.Sequelize.Op;
 
 showsController.recommended = async (req, res) => {
-  const trackedShows = await db.Tracking.findAll({
-    where: { userId: req.userId },
-    attributes: ['showId']
-    // order: db.Sequelize.fn('RANDOM')
-  });
-  // array_length(array[1,2,3], 1)
+  const userId = req.user.id;
+  const trackedShows = await showModule.findTrackedShows(userId);
   const trackedShowsIds = trackedShows.map(el => el.showId);
-  const shows = await db.Show.findAll({
-    where: {
-      id: trackedShowsIds,
-      backdrop_path: { [Op.ne]: null }
-    },
-
-    attributes: { exclude: ['similar'] },
-    include: [
-      {
-        model: db.Tracking,
-        as: 'tracking',
-        where: { userId: req.userId },
-        required: false,
-        attributes: ['status', 'rating']
-      }
-    ],
-    order: [['recommendations', 'DESC']]
-  });
-
-  const fullShows = await Promise.all(
-    shows.map(async show => {
-      const recommendations = await db.Show.findAll({
-        where: {
-          id: show.recommendations,
-          backdrop_path: { [Op.ne]: null }
-        },
-        attributes: { exclude: ['similar', 'recommendations'] }
-      });
-      show.recommendations = recommendations;
-      return show;
-    })
-  );
-
+  const shows = await showModule.findShows(trackedShowsIds,userId);
+  const fullShows = await showModule.findFullShows(shows);
   res.status(200).send(fullShows);
 };
 
-showsController.recommended2 = async (req, res) => {
-  const results = await db.Show.findAll({
-    where: { backdrop_path: { [Op.ne]: null } },
-    include: [
-      {
-        model: db.Tracking,
-        as: 'tracking',
-        where: { userId: req.userId },
-        required: false,
-        attributes: ['status', 'rating']
-      }
-    ],
-    limit: 20,
-    order: [['vote_average', 'DESC']]
-  });
-  res.status(200).send(results);
-};
-
 showsController.get = async (req, res) => {
+  const userId = req.user.id;
   const id = req.params.id;
-  await helpers.createOrUpdateShow(id);
-  const show = await helpers.getShowForUser(id, req.userId);
-
-  const similar = await db.Show.findAll({
-    where: { id: show.similar, backdrop_path: { [Op.ne]: null } }
-  });
-  show.similar = similar;
-  const recommendations = await db.Show.findAll({
-    where: { id: show.recommendations, backdrop_path: { [Op.ne]: null } }
-  });
-  show.recommendations = recommendations;
-  res.status(200).send(show);
+    try {
+      await showModule.createOrUpdateShow(id);
+      const show = await showModule.getShowForUser(id, userId);
+      const similar = await showModule.findSimilar(show);
+      show.similar = similar;
+      const recommendations = await showModule.findRecommendations(show);
+      show.recommendations = recommendations;
+      res.status(200).send(show);
+    }
+    catch (error) {
+      res.status(400).send();
+    }
 };
 
 showsController.search = async (req, res) => {
   const { term } = req.body;
-  const results = await helpers.searchShows(term);
-  res.status(200).send(results);
+  if (!term) res.status(400).end();
+  try {
+    const results = await showModule.searchShows(term);
+    res.status(200).send(results);
+  }
+  catch (error) {
+    res.status(400).end();
+  }
 };
 
 module.exports = showsController;

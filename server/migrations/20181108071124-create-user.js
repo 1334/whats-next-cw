@@ -12,25 +12,33 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
+        validate: {
+          isEmail: true
+        }
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       avatar: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
       },
-      seen: {
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+      authToken: {
         allowNull: false,
-        defaultValue: []
+        type: Sequelize.STRING
       },
-      toSee: {
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
-        allowNull: false,
-        defaultValue: []
+      facebookId: {
+        allowNull: true,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

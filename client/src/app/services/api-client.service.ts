@@ -8,13 +8,14 @@ import User from '../models/user';
 import SearchResult from '../models/search-result';
 import { environment } from 'src/environments/environment';
 import Tracking from '../interfaces/tracking';
+import AuthInfo from '../interfaces/authinfo';
 import TrackingResult from '../interfaces/tracking-result';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiClientService {
-  baseUrl = environment.serverUrl;
+  baseUrl = 'http://localhost:4000'
 
   constructor(private http: HttpClient) {}
 
@@ -33,8 +34,8 @@ export class ApiClientService {
         });
         data = data.slice(0, 6);
         data = data.map(show => {
-          show.recommendations = show.recommendations.map(show =>
-            Show.from(show)
+          show.recommendations = show.recommendations.map(item =>
+            Show.from(item)
           );
           show.recommendations = show.recommendations.sort(() => {
             return 0.5 - Math.random();
@@ -50,9 +51,9 @@ export class ApiClientService {
   getTVShowDetails(id: number): Observable<Show> {
     return this.http.get<Show>(`${this.baseUrl}/shows/${id}`).pipe(
       map(show => {
-        show.similar = show.similar.map(show => Show.from(show));
-        show.recommendations = show.recommendations.map(show =>
-          Show.from(show)
+        show.similar = show.similar.map(item => Show.from(item));
+        show.recommendations = show.recommendations.map(item =>
+          Show.from(item)
         );
         show.status = (show.tracking && show.tracking.status) || '';
         show.rating = (show.tracking && show.tracking.rating) || 0;
@@ -80,12 +81,17 @@ export class ApiClientService {
       .post<Show>(`${this.baseUrl}/user/${tracking.showId}/status`, tracking)
       .pipe(
         map(show => {
-          show.similar = show.similar.map(show => Show.from(show));
+          show.similar = show.similar.map(item => Show.from(item));
           show.status = (show.tracking && show.tracking.status) || '';
           show.rating = (show.tracking && show.tracking.rating) || 0;
           show.isTracked = !!show.status;
           return Show.from(show);
         })
       );
+  }
+
+  auth(info: AuthInfo): Observable<string> {
+    return this.http
+      .post<string>(`${this.baseUrl}/auth`, info);
   }
 }

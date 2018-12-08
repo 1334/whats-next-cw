@@ -1,0 +1,25 @@
+<div *ngIf="isLoggedIn">
+  <nav class="main-nav">
+    <a
+      class="item icon-home"
+      [routerLink]="['recommendations']"
+      [routerLinkActive]="['active']"
+    >
+      Recommended
+    </a>
+    <a
+      class="item icon-search"
+      [routerLink]="['search']"
+      [routerLinkActive]="['active']"
+    >
+      Search
+    </a>
+    <a
+      class="item icon-user"
+      [routerLink]="['my-shows']"
+      [routerLinkActive]="['active']"
+    >
+      My Shows
+    </a>
+  </nav>
+</div>
